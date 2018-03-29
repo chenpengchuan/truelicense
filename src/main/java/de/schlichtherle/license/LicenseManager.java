@@ -134,6 +134,10 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
         return var4;
     }
 
+    public final synchronized LicenseContent install(byte[] licenseByte) throws Exception {
+        return this.install(licenseByte,this.getLicenseNotary());
+    }
+
     public final synchronized LicenseContent install(File var1) throws Exception {
         return this.install(var1, this.getLicenseNotary());
     }
@@ -154,17 +158,7 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
         this.setCertificate(var3);
         return var4;
     }
-    public final synchronized LicenseContent install(byte[] licenseByte) throws Exception {
-        LicenseNotary licenseNotary = this.getLicenseNotary();
-        GenericCertificate var3 = this.getPrivacyGuard().key2cert(licenseByte);
-        licenseNotary.verify(var3);
-        LicenseContent var4 = (LicenseContent)var3.getContent();
-        this.validate(var4);
-        this.verifyValidate(var4);
-        this.setLicenseKey(licenseByte);
-        this.setCertificate(var3);
-        return var4;
-    }
+
     public final synchronized LicenseContent verify() throws Exception {
         return this.verify(this.getLicenseNotary());
     }
