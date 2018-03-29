@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPerios="60 second" debug="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <contextName>TrueLicense-Executor</contextName>
+    <property name="logLayout" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %X{pid} %5p [%t] --- %c{1}: %m%n %throwable{1000}"/>
+    <property name="logDir" value="${TRUELICENSE_LOGS_DIR}/${TRUELICENSE_COM_NAME}"/>
+    <property name="logName" value="${TRUELICENSE_COM_NAME}"/>
+
+    <appender name="Stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${logLayout}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logDir}/${logName}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logDir}/${logName}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${logLayout}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="com.truelicense" level="INFO"/>
+
+    <root level="INFO">
+        <appender-ref ref="RollingFile"/>
+    </root>
+</configuration>
