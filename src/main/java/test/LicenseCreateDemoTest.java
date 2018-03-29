@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class LicenseCreateDemoTest {
-    private String propFilePath = "E:\\github\\truelicense\\src\\main\\config\\create.properties";
+    private String propFilePath = "E:\\project\\truelicense\\src\\main\\config\\create.properties";
 
     private Map<String,String> setParam() {
         Map<String,String> map = new HashMap<>();
@@ -27,6 +27,8 @@ public class LicenseCreateDemoTest {
         map.put("consumerAmount",prop.getProperty("consumerAmount")) ;
         map.put("info",prop.getProperty("info")) ;
         map.put("sid",prop.getProperty("sid")) ;
+        String s = prop.getProperty("hexPath");
+        map.put("hexPath",prop.getProperty("hexPath")) ;
         return map;
     }
     public static void main(String[] args) {

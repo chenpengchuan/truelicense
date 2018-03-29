@@ -5,7 +5,9 @@ import de.schlichtherle.client.CreateLicense;
 import de.schlichtherle.model.LicenseCheckModel;
 import de.schlichtherle.model.LicenseCommonContent;
 import de.schlichtherle.model.LicenseCommonParam;
+import de.schlichtherle.util.LicFileutils;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -32,18 +34,20 @@ public class LicenseCreateDemo {
         licenseCommonContent.setInfo(paramers.get("info"));
 
         LicenseCheckModel licenseCheckModel = new LicenseCheckModel();
-//		List<String> macAddressList = new ArrayList<String>();
-//		macAddressList.add(mac);
-//		licenseCheckModel.setMacAddressList(macAddressList);
         licenseCheckModel.setSid(paramers.get("sid"));
         licenseCommonContent.setLicenseCheckModel(licenseCheckModel);
 
         Boolean succ = new CreateLicense().create(licenseCommonParam, licenseCommonContent);
 
         if (succ) {
-            System.out.println("create result Successed!");
+            try {
+                LicFileutils.byteFilleToHexFile(paramers.get("licPath"),paramers.get("hexPath"));
+                System.out.println("create license Successed!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
-            System.out.println("create result Failed!");
+            System.out.println("create license Failed!");
         }
 
     }
