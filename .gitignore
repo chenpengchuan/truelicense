@@ -2,6 +2,7 @@
 *.class
 .idea/
 target/
+license-workdir/
 # Log file
 *.log
 
