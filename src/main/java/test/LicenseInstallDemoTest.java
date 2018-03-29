@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class LicenseInstallDemoTest {
-    public static String propFilePath = "E:\\project\\truelicense\\license-workdir\\conf\\verify.properties";
+    public static String propFilePath = "E:\\license-conf-dir\\verify.properties";
 
     private Map<String, String> setParam() {
         Map<String, String> map = new HashMap<>();
