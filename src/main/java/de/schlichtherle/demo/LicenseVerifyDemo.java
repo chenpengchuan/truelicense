@@ -3,11 +3,7 @@ package de.schlichtherle.demo;
 import de.schlichtherle.client.LicenseManagerHolder;
 import de.schlichtherle.license.LicenseContent;
 import de.schlichtherle.license.LicenseManager;
-import sun.misc.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Map;
 
 /**
