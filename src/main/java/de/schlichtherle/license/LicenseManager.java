@@ -134,6 +134,10 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
         return var4;
     }
 
+    public final synchronized LicenseContent install(byte[] licenseByte) throws Exception {
+        return this.install(licenseByte,this.getLicenseNotary());
+    }
+
     public final synchronized LicenseContent install(File var1) throws Exception {
         return this.install(var1, this.getLicenseNotary());
     }
