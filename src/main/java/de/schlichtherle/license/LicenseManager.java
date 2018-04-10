@@ -33,7 +33,7 @@ import java.util.prefs.Preferences;
  * <p>
  * This class is thread-safe.
  *
- * @author  Christian Schlichtherle
+ * @author Christian Schlichtherle
  * @version $Id$
  */
 
@@ -116,7 +116,9 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
         this.store(var1, this.getLicenseNotary(), var2);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected synchronized void store(LicenseContent var1, LicenseNotary var2, File var3) throws Exception {
         storeLicenseKey(this.create(var1, var2), var3);
     }
@@ -125,7 +127,9 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
         return this.create(var1, this.getLicenseNotary());
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected synchronized byte[] create(LicenseContent var1, LicenseNotary var2) throws Exception {
         this.initialize(var1);
         this.validate(var1);
@@ -135,23 +139,27 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
     }
 
     public final synchronized LicenseContent install(byte[] licenseByte) throws Exception {
-        return this.install(licenseByte,this.getLicenseNotary());
+        return this.install(licenseByte, this.getLicenseNotary());
     }
 
     public final synchronized LicenseContent install(File var1) throws Exception {
         return this.install(var1, this.getLicenseNotary());
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected synchronized LicenseContent install(File var1, LicenseNotary var2) throws Exception {
         return this.install(loadLicenseKey(var1), var2);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected synchronized LicenseContent install(byte[] var1, LicenseNotary var2) throws Exception {
         GenericCertificate var3 = this.getPrivacyGuard().key2cert(var1);
         var2.verify(var3);
-        LicenseContent var4 = (LicenseContent)var3.getContent();
+        LicenseContent var4 = (LicenseContent) var3.getContent();
         this.validate(var4);
         this.verifyValidate(var4);
         this.setLicenseKey(var1);
@@ -159,15 +167,11 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
         return var4;
     }
 
-    public final synchronized LicenseContent verify() throws Exception {
-        return this.verify(this.getLicenseNotary());
-    }
-
-    /** @deprecated */
-    protected synchronized LicenseContent verify(LicenseNotary var1) throws Exception {
+    public final synchronized LicenseContent licenseInfo() throws Exception {
+        LicenseNotary var1 = this.getLicenseNotary();
         GenericCertificate var2 = this.getCertificate();
         if (var2 != null) {
-            return (LicenseContent)var2.getContent();
+            return (LicenseContent) var2.getContent();
         } else {
             byte[] var3 = this.getLicenseKey();
             if (var3 == null) {
@@ -175,7 +179,31 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
             } else {
                 var2 = this.getPrivacyGuard().key2cert(var3);
                 var1.verify(var2);
-                LicenseContent var4 = (LicenseContent)var2.getContent();
+                LicenseContent var4 = (LicenseContent) var2.getContent();
+                return var4;
+            }
+        }
+    }
+
+    public final synchronized LicenseContent verify() throws Exception {
+        return this.verify(this.getLicenseNotary());
+    }
+
+    /**
+     * @deprecated
+     */
+    protected synchronized LicenseContent verify(LicenseNotary var1) throws Exception {
+        GenericCertificate var2 = this.getCertificate();
+        if (var2 != null) {
+            return (LicenseContent) var2.getContent();
+        } else {
+            byte[] var3 = this.getLicenseKey();
+            if (var3 == null) {
+                throw new NoLicenseInstalledException(this.getLicenseParam().getSubject());
+            } else {
+                var2 = this.getPrivacyGuard().key2cert(var3);
+                var1.verify(var2);
+                LicenseContent var4 = (LicenseContent) var2.getContent();
                 this.verifyValidate(var4);
                 this.validate(var4);
                 this.setCertificate(var2);
@@ -188,19 +216,21 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
         return this.verify(var1, this.getLicenseNotary());
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected synchronized LicenseContent verify(byte[] var1, LicenseNotary var2) throws Exception {
         GenericCertificate var3 = this.getPrivacyGuard().key2cert(var1);
         var2.verify(var3);
-        LicenseContent var4 = (LicenseContent)var3.getContent();
+        LicenseContent var4 = (LicenseContent) var3.getContent();
         this.verifyValidate(var4);
         this.validate(var4);
         return var4;
     }
 
     public synchronized void uninstall() throws Exception {
-        this.setLicenseKey((byte[])null);
-        this.setCertificate((GenericCertificate)null);
+        this.setLicenseKey((byte[]) null);
+        this.setCertificate((GenericCertificate) null);
     }
 
     protected synchronized void initialize(LicenseContent var1) {
@@ -290,8 +320,10 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
             }
         }
     }
+
     /**
      * 添加EXTA属性校验，比如多MAC绑定
+     *
      * @param content
      * @throws LicenseContentException
      */
@@ -299,10 +331,10 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
             throws LicenseContentException {
 //        validate(content);
         //add validate mac Lists check
-        LicenseCheckModel licenseCheckModel = (LicenseCheckModel)content.getExtra();
-        if(null != licenseCheckModel){
+        LicenseCheckModel licenseCheckModel = (LicenseCheckModel) content.getExtra();
+        if (null != licenseCheckModel) {
             List<String> macAddressList = licenseCheckModel.getMacAddressList();
-            if(null != macAddressList && macAddressList.size() > 0){
+            if (null != macAddressList && macAddressList.size() > 0) {
                 try {
                     boolean validate = false;
                     for (String macAddress : macAddressList) {
@@ -311,7 +343,7 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
                             break;
                         }
                     }
-                    if(!validate){
+                    if (!validate) {
                         throw new LicenseContentException(EXC_LICENSE_HAS_EXPIRED);
                     }
                 } catch (SocketException e) {
@@ -319,36 +351,45 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
                 }
             }
             String lisenseSid = licenseCheckModel.getSid();
-            if(lisenseSid != null){
+            if (lisenseSid != null) {
                 String computerSid = SidUtils.getSid();
                 boolean validate = false;
-                if(lisenseSid.equals(computerSid)){
+                if (lisenseSid.equals(computerSid)) {
                     validate = true;
                 }
-                if(!validate){
+                if (!validate) {
                     System.err.println("the license is error please take your sid contact your administrator !");
                     throw new LicenseContentException(EXC_LICENSE_HAS_EXPIRED);
                 }
             }
         }
     }
-    /** @deprecated */
+
+    /**
+     * @deprecated
+     */
     protected GenericCertificate getCertificate() {
         return this.certificate != null && System.currentTimeMillis() < this.certificateTime + 1800000L ? this.certificate : null;
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected synchronized void setCertificate(GenericCertificate var1) {
         this.certificate = var1;
         this.certificateTime = System.currentTimeMillis();
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected byte[] getLicenseKey() {
-        return this.getLicenseParam().getPreferences().getByteArray(PREFERENCES_KEY, (byte[])null);
+        return this.getLicenseParam().getPreferences().getByteArray(PREFERENCES_KEY, (byte[]) null);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     protected synchronized void setLicenseKey(byte[] var1) {
         Preferences var2 = this.getLicenseParam().getPreferences();
         if (var1 != null) {
@@ -376,7 +417,7 @@ public class LicenseManager implements LicenseCreator, LicenseVerifier {
     }
 
     protected static byte[] loadLicenseKey(File var0) throws IOException {
-        int var1 = Math.min((int)var0.length(), 1048576);
+        int var1 = Math.min((int) var0.length(), 1048576);
         FileInputStream var2 = new FileInputStream(var0);
         byte[] var3 = new byte[var1];
 
