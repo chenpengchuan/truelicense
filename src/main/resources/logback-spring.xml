@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPerios="60 second" debug="true">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <contextName>Woven-DataFlow-Executor</contextName>
+    <contextName>TrueLicense-Executor</contextName>
     <property name="logLayout" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %X{pid} %5p [%t] --- %c{1}: %m%n %throwable{1000}"/>
     <property name="logDir" value="${TRUELICENSE_LOGS_DIR}/${TRUELICENSE_COM_NAME}"/>
     <property name="logName" value="${TRUELICENSE_COM_NAME}"/>
@@ -24,7 +24,7 @@
     </appender>
 
     <logger name="org.springframework" level="WARN"/>
-    <logger name="com.merce.woven" level="INFO"/>
+    <logger name="com.truelicense" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="RollingFile"/>
