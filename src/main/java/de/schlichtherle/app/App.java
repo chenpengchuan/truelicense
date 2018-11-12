@@ -2,7 +2,6 @@ package de.schlichtherle.app;
 
 import de.schlichtherle.app.rest.CreateLicenseResource;
 import de.schlichtherle.app.rest.SidResource;
-import de.schlichtherle.app.rest.TrueLicenseResource;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,7 +23,6 @@ public class App {
                 .sources(App.class)
                 .sources(SidResource.class)
                 .sources(CreateLicenseResource.class)
-                .sources(TrueLicenseResource.class)
 //                .web(WebApplicationType.REACTIVE)
                 .run(args);
     }

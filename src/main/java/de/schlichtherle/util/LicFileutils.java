@@ -1,9 +1,12 @@
 package de.schlichtherle.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 
 public class LicFileutils {
-
+    private static Logger logger = LoggerFactory.getLogger(LicFileutils.class);
     /**
      * 读入二进制文件并生成对应的十六进制字符串文件
      * @param bytePath 二进制文件路径(输入文件)
@@ -105,11 +108,11 @@ public class LicFileutils {
                 if (writer != null) {
                     writer.close();
                 } else {
-                    System.out.println(FilePath + " write hexFile failed!");
+                    logger.error(FilePath + " write hexFile failed!");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println(FilePath + " write hexFile failed!");
+                logger.error(FilePath + " write hexFile failed!");
             }
         }
     }

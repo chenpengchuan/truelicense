@@ -13,7 +13,7 @@ TRUELICENSE_CONF=${TRUELICENSE_CONF:-${TRUELICENSE_HOME}/conf}
 
 TRUELICENSE_COM_NAME=truelicense
 . ${TRUELICENSE_CONF}/truelicense-env.sh
-. ${TRUELICENSE_BIN}/truelicense-process-helper
+. ${TRUELICENSE_BIN}/truelicense-process-helper.sh
 
 checkConfig
 checkAction "${action}" "${TRUELICENSE_COM_NAME}.sh"

@@ -9,6 +9,8 @@ import de.schlichtherle.model.LicenseCommonContent;
 import de.schlichtherle.model.LicenseCommonParam;
 import de.schlichtherle.util.LicFileutils;
 import org.jboss.logging.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,8 @@ import java.util.Map;
 @Controller
 @RestController
 public class CreateLicenseResource {
+
+    private static Logger logger = LoggerFactory.getLogger(CreateLicenseResource.class);
 
     @Autowired
     private LicenseCommonUtil commonUtil;
@@ -51,13 +55,13 @@ public class CreateLicenseResource {
                 inputs.read(arr);
                 inputs.close();
                 condition.setLicense(LicFileutils.bytesToHex(arr));
-                System.out.println("create license Successed!");
+                logger.info("create license Successed!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return new ResponseEntity<>(condition, HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
-            System.out.println("create license Failed!");
+            logger.error("create license Failed!");
             return new ResponseEntity<>("create license Failed!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
