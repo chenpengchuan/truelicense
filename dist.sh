@@ -21,14 +21,13 @@ if [ -z "${TRUELICENSE_DIST}" ]; then
 fi
 
 truelicense_dist_base="${TRUELICENSE_DIST}/${FULL_PACKAGE_NAME}"
-echo 'truelicense_dist_base_base: '$truelicense_dist_base_base
-mkdir -p ${truelicense_dist_base_base}
-truelicense_dist_base_base=$(cd ${truelicense_dist_base_base} && pwd)
-cd ${truelicense_dist_base_base}
+echo 'truelicense_dist_base: '$truelicense_dist_base
+mkdir -p ${truelicense_dist_base}
+truelicense_dist_base=$(cd ${truelicense_dist_base} && pwd)
+cd ${truelicense_dist_base}
 
 mkdir conf bin logs docs
 mkdir -p libs/jars
-echo "${FULL_PACKAGE_NAME}" > conf/version
 
 echo "prepare components dirs"
 components=(truelicense)
@@ -36,7 +35,7 @@ project_groups=("truelicense")
 components_length=${#components[@]}
 components_idx_end=$((components_length-1))
 
-cd ${truelicense_dist_base_base}
+cd ${truelicense_dist_base}
 for i in $(seq 0 ${components_idx_end});
 do
     scom=${components[i]}
@@ -62,7 +61,7 @@ do
     for p in ${projects[@]};
     do
       echo "copy jars from dep of $p (duplicate jars will be skipped)"
-      pjdep="${truelicense_dist_base_base}/${p}.deps"
+      pjdep="${truelicense_dist_base}/${p}.deps"
      # cd ${truelicense_project_base}/${p}
 
       case ${p} in
@@ -80,16 +79,16 @@ do
                     mv target/${p}-${truelicense_project_version}-pg.jar target/${p}-${truelicense_project_version}.jar
             fi
 			com_jars="${com_jars//:/ } target/${p}-${truelicense_project_version}.jar"
-			cp -n -f -v ${com_jars} ${truelicense_dist_base_base}/libs/jars
+			cp -n -f -v ${com_jars} ${truelicense_dist_base}/libs/jars
 			com_jars_array=(${com_jars})
 
 			for sjar in ${com_jars_array[@]};
 			do
 				sjar=$(basename ${sjar})
-				ln -f -s -v ../../libs/jars/${sjar} ${truelicense_dist_base_base}/libs/${components[i]}
+				ln -f -s -v ../../libs/jars/${sjar} ${truelicense_dist_base}/libs/${components[i]}
 			done
 
-			cd ${truelicense_dist_base_base}/libs/${components[i]}
+			cd ${truelicense_dist_base}/libs/${components[i]}
 			;;
 
       esac
@@ -98,11 +97,11 @@ done
 
 echo 'copy configuration files ......'
 cd ${truelicense_project_base}
-cp -R src/main/resources/* ${truelicense_dist_base_base}/conf
-chmod +x ${truelicense_dist_base_base}/conf/*.sh
+cp -R src/conf/* ${truelicense_dist_base}/conf
+chmod +x ${truelicense_dist_base}/conf/*.sh
 
 ## shell scripts for startup & shutdown
-cp  src/bin/* ${truelicense_dist_base_base}/bin
-chmod +x ${truelicense_dist_base_base}/bin/*.sh
+cp  src/bin/* ${truelicense_dist_base}/bin
+chmod +x ${truelicense_dist_base}/bin/*.sh
 
 cd ${truelicense_project_base}
