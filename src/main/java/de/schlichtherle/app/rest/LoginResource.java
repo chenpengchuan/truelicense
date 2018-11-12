@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @Controller
 @RestController
+@CrossOrigin
 public class LoginResource {
     public static String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
 
@@ -33,6 +35,7 @@ public class LoginResource {
     private JwtTokenHandler jwtTokenHandler;
 
     @PostMapping("/login")
+    @CrossOrigin
     public ResponseEntity logIn(@Param User loginUser) {
         Map<String, Object> map = new HashMap<String, Object>();
         String name = loginUser.getUserName();

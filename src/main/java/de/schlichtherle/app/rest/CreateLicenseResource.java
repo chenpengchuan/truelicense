@@ -27,6 +27,7 @@ import java.util.Map;
 @RequestMapping("/license")
 @Controller
 @RestController
+@CrossOrigin
 public class CreateLicenseResource {
 
     private static Logger logger = LoggerFactory.getLogger(CreateLicenseResource.class);
@@ -41,6 +42,7 @@ public class CreateLicenseResource {
     private LicenseSave licenseSave;
 
     @PostMapping("/create")
+    @CrossOrigin
     public ResponseEntity createLicense(@Param LicenseEntity condition) {
         commonUtil.checkCondition(condition);
         LicenseCommonContent licenseCommonContent = commonUtil.buildLicenseCommonContent(condition);
@@ -67,6 +69,7 @@ public class CreateLicenseResource {
     }
 
     @PostMapping("/save")
+    @CrossOrigin
     public ResponseEntity save(LicenseEntity entity){
         Map<String,String> map =new HashMap<>();
        int n = licenseSave.insertIntoDatabases(entity);
@@ -80,12 +83,14 @@ public class CreateLicenseResource {
     }
 
     @GetMapping("/query")
+    @CrossOrigin
     public ResponseEntity<List<LicenseEntity>> query(){
         List<LicenseEntity> list = licenseQuery.queryLicenseList();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @GetMapping(value = "{id}")
+    @CrossOrigin
     public ResponseEntity<LicenseEntity> queryById(@PathVariable(value="id") String id){
         LicenseEntity entity = licenseQuery.findOneById(id);
         return new ResponseEntity<>(entity, HttpStatus.OK);
