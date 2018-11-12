@@ -1,7 +1,11 @@
 package de.schlichtherle.app.rest;
 
+import de.schlichtherle.app.entity.User;
+import de.schlichtherle.app.service.JwtTokenHandler;
 import org.jboss.logging.Param;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,14 +21,19 @@ import java.util.Map;
 @Controller
 @RestController
 public class LoginResource {
+    public static String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
+
     @Value("${server.login.username:admin}")
     private String userName;
 
     @Value("${server.login.password:inforefiner}")
     private String passWord;
 
+    @Autowired
+    private JwtTokenHandler jwtTokenHandler;
+
     @PostMapping("/login")
-    public ResponseEntity logIn(@Param LoginUser loginUser) {
+    public ResponseEntity logIn(@Param User loginUser) {
         Map<String, Object> map = new HashMap<String, Object>();
         String name = loginUser.getUserName();
         String pwd = loginUser.getPassWord();
@@ -36,31 +45,11 @@ public class LoginResource {
             map.put("err", "wrong userName/passWord");
             return new ResponseEntity<Map<String, Object>>(map, HttpStatus.BAD_REQUEST);
         } else {
+            HttpHeaders hdader = new HttpHeaders();
+            hdader.add(AUTH_HEADER_NAME, jwtTokenHandler.createTokenForUser(loginUser));
             map.put("loginUser:", name);
-            return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
+            return new ResponseEntity<Map<String, Object>>(map,hdader, HttpStatus.OK);
         }
     }
 
-
-}
-
-class LoginUser {
-    private String userName;
-    private String passWord;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassWord() {
-        return passWord;
-    }
-
-    public void setPassWord(String passWord) {
-        this.passWord = passWord;
-    }
 }
