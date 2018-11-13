@@ -25,12 +25,6 @@ import java.util.Map;
 public class LoginResource {
     public static String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
 
-    @Value("${server.login.username:admin}")
-    private String userName;
-
-    @Value("${server.login.password:inforefiner}")
-    private String passWord;
-
     @Autowired
     private JwtTokenHandler jwtTokenHandler;
 
@@ -44,7 +38,7 @@ public class LoginResource {
             map.put("err", "userName/passWord can not be null");
             return new ResponseEntity<Map<String, Object>>(map, HttpStatus.BAD_REQUEST);
         }
-        if (!userName.equals(name) || !passWord.equals(pwd)) {
+        if (!jwtTokenHandler.userName.equals(name) || !jwtTokenHandler.passWord.equals(pwd)) {
             map.put("err", "wrong userName/passWord");
             return new ResponseEntity<Map<String, Object>>(map, HttpStatus.BAD_REQUEST);
         } else {
