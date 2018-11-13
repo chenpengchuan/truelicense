@@ -25,7 +25,9 @@ public class ContexFilter extends GenericFilterBean {
         HttpServletResponse response = (HttpServletResponse) response1;
         response.setContentType("application/json");
         String token = httpServletRequest.getHeader("X-AUTH-TOKEN");
-        if(httpServletRequest.getRequestURI().equals("/auth/login")){
+        if(httpServletRequest.getRequestURI().equals("/auth/login") ||
+                httpServletRequest.getRequestURI().endsWith(".html") ||
+                httpServletRequest.getRequestURI().endsWith(".ico")){
             chain.doFilter(request, response);
             return;
         }

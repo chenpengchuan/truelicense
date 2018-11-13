@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -60,7 +61,7 @@ public class CreateLicenseResource {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return new ResponseEntity<>(condition, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(condition, HttpStatus.OK);
         } else {
             logger.error("create license Failed!");
             return new ResponseEntity<>("create license Failed!", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +83,8 @@ public class CreateLicenseResource {
 
     @GetMapping("/query")
     public ResponseEntity<Page<LicenseEntity>> query(@RequestParam(value="user") String username,@RequestParam(value="page") int page,@RequestParam(value="limit") int limit) {
-        Page<LicenseEntity> rt = licenseQuery.queryLicenseList(username,page,limit);
+        Sort sort = new Sort(Sort.Direction.ASC,"notAfter");
+        Page<LicenseEntity> rt = licenseQuery.queryLicenseList(username,page,limit,sort);
         return new ResponseEntity<>(rt, HttpStatus.OK);
     }
 
