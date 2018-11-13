@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component("cntexFilter")
@@ -19,8 +20,10 @@ public class ContexFilter extends GenericFilterBean {
     private JwtTokenHandler jwtTokenHandler;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response1, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse response = (HttpServletResponse) response1;
+        response.setContentType("application/json");
         String token = httpServletRequest.getHeader("X-AUTH-TOKEN");
         if(httpServletRequest.getRequestURI().equals("/auth/login")){
             chain.doFilter(request, response);

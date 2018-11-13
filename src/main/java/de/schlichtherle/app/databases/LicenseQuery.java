@@ -1,37 +1,49 @@
 package de.schlichtherle.app.databases;
 
 import de.schlichtherle.app.entity.LicenseEntity;
-import de.schlichtherle.app.service.CheckTableService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class LicenseQuery {
 
-    private static final String QUERY_LIST_SQL="SELECT * FROM "
-            +CheckTableService.TABLE_NAME+" ORDER BY not_after DESC";
-
-    private static final String QUERY_ONE_SQL = "SELECT * FROM "+CheckTableService.TABLE_NAME+" WHERE id =?";
-
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private LicenseRepository licenseRepository;
 
     public List<LicenseEntity> queryLicenseList(){
-        RowMapper<LicenseEntity> rowMapper = new BeanPropertyRowMapper<LicenseEntity>(LicenseEntity.class);
-        List<LicenseEntity> result = (List<LicenseEntity>) jdbcTemplate.query(QUERY_LIST_SQL, rowMapper);
+        Sort sort = new Sort(Sort.Direction.DESC,"notAfter");
+        List<LicenseEntity> result = licenseRepository.findAll(sort);
+
+        return result;
+    }
+    public Page<LicenseEntity> queryLicenseList(String user,int page,int limit){
+        Sort sort = new Sort(Sort.Direction.DESC,"notAfter");
+        Pageable pageable = new PageRequest(page,limit,sort);
+        if(StringUtils.isEmpty(user)){
+            user = "%";
+        }else{
+           user = "%"+user+"%";
+        }
+        Page<LicenseEntity> result=licenseRepository.findAllByUser(user+"%",pageable);
+        return result;
+    }
+    public List<LicenseEntity> findByName(){
+        Sort sort = new Sort(Sort.Direction.DESC,"notAfter");
+        List<LicenseEntity> result = licenseRepository.findAll(sort);
 
         return result;
     }
 
-    public LicenseEntity findOneById(String id){
-//        LicenseRowMapper<LicenseEntity> rowMapper = new BeanPropertyRowMapper<>(LicenseEntity.class);
-        LicenseEntity result = jdbcTemplate.queryForObject(QUERY_ONE_SQL,new LicenseRowMapper(),id);
-
+    public Optional<LicenseEntity> findOneById(String id){
+        Optional<LicenseEntity> result = licenseRepository.findById(id);
         return result;
     }
 }

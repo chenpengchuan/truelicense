@@ -12,17 +12,17 @@ import org.jboss.logging.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequestMapping("/license")
 @Controller
@@ -42,7 +42,6 @@ public class CreateLicenseResource {
     private LicenseSave licenseSave;
 
     @PostMapping("/create")
-    @CrossOrigin
     public ResponseEntity createLicense(@Param LicenseEntity condition) {
         commonUtil.checkCondition(condition);
         LicenseCommonContent licenseCommonContent = commonUtil.buildLicenseCommonContent(condition);
@@ -69,30 +68,22 @@ public class CreateLicenseResource {
     }
 
     @PostMapping("/save")
-    @CrossOrigin
-    public ResponseEntity save(LicenseEntity entity){
-        Map<String,String> map =new HashMap<>();
-       int n = licenseSave.insertIntoDatabases(entity);
-       if(n == 1){
-           map.put("id",entity.getId());
-           return new ResponseEntity<>(map, HttpStatus.OK);
-       }else {
-           map.put("error","save error");
-           return new ResponseEntity<>("save error", HttpStatus.INTERNAL_SERVER_ERROR);
-       }
+    public ResponseEntity save(LicenseEntity entity) {
+        Map<String, String> map = new HashMap<>();
+        licenseSave.insertIntoDatabases(entity);
+        if (!StringUtils.isEmpty(entity.getId())) {
+            map.put("id", entity.getId());
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            map.put("error", "save error");
+            return new ResponseEntity<>("save error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/query")
-    @CrossOrigin
-    public ResponseEntity<List<LicenseEntity>> query(){
-        List<LicenseEntity> list = licenseQuery.queryLicenseList();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    public ResponseEntity<Page<LicenseEntity>> query(@RequestParam(value="user") String username,@RequestParam(value="page") int page,@RequestParam(value="limit") int limit) {
+        Page<LicenseEntity> rt = licenseQuery.queryLicenseList(username,page,limit);
+        return new ResponseEntity<>(rt, HttpStatus.OK);
     }
 
-    @GetMapping(value = "{id}")
-    @CrossOrigin
-    public ResponseEntity<LicenseEntity> queryById(@PathVariable(value="id") String id){
-        LicenseEntity entity = licenseQuery.findOneById(id);
-        return new ResponseEntity<>(entity, HttpStatus.OK);
-    }
 }

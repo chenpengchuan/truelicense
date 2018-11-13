@@ -1,20 +1,33 @@
 package de.schlichtherle.app.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.hibernate.annotations.GenericGenerator;
 
-import java.util.UUID;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "license")
 public class LicenseEntity {
 
-    private String id= UUID.randomUUID().toString();
+    @Id
+    @GenericGenerator(name="idGenerator", strategy="uuid") //这个是hibernate的注解/生成32位UUID
+    @GeneratedValue(generator="idGenerator")
+    private String id;
     private String user;
     private String sid;
     private String info;
+    @Transient
     private String password;
+
+    @Column(columnDefinition = "DATETIME")
     private String createTime;
+
+    @Column(columnDefinition = "DATE")
     private String notBefore;
+
+    @Column(columnDefinition = "DATE")
     private String notAfter;
+
+    @Column(columnDefinition = "TEXT")
     private String license;
 
     public String getId() {
