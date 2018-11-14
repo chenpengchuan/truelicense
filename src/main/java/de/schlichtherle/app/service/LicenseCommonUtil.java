@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,32 +28,51 @@ public class LicenseCommonUtil {
     @Value("${license.common.content.subject:license}")
     private String SUBJECT;
 
-    @Value("${license.common.content.licPath:license.lic}")
+    @Value("${license.common.content.licPath:/tmp}")
     public String licPath;
+
+    @Value("${license.common.content.licName:license.lic}")
+    public String licName;
 
     @Value("${license.common.content.consumerType:user}")
     private String consumerType;
 
     /**
      * 构建CommonParam
-     * @param keypwd : password for create license
+     *
+     * @param condition : condition for create license
      * @return
      */
-    public LicenseCommonParam buildLicenseCommonParam(String keypwd) {
+    public LicenseCommonParam buildLicenseCommonParam(LicenseEntity condition) {
         LicenseCommonParam licenseCommonParam = new LicenseCommonParam();
         licenseCommonParam.setAlias(PRIVATEALIAS);
-        licenseCommonParam.setKeyPwd(keypwd);
-        licenseCommonParam.setResource(priPath);
+        licenseCommonParam.setKeyPwd(condition.getPassword());
         licenseCommonParam.setSubject(SUBJECT);
-        licenseCommonParam.setLicPath(licPath);
+        licenseCommonParam.setLicPath(getlicPath(condition.getUser(), condition.getNotBefore()));
         licenseCommonParam.setStorePwd(STOREPWD);
+        licenseCommonParam.setResource(priPath);
 
         return licenseCommonParam;
     }
 
+    public String getlicPath(String user, String notBefore) {
+        String path = licPath.endsWith("/") ? licPath.substring(0, licPath.length() - 1) : licPath;
+        if (!StringUtils.isEmpty(user)) {
+            path += "/" + user;
+        }
+        if (!StringUtils.isEmpty(user)) {
+            path += "/" + notBefore;
+        }
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return path + "/" + licName;
+    }
 
     /**
      * 构建CommonContent
+     *
      * @param condition
      * @return
      */
@@ -75,28 +95,29 @@ public class LicenseCommonUtil {
 
     /**
      * 检查前端传传回来的参数是否齐全
+     *
      * @param condition
      */
-    public void checkCondition(LicenseEntity condition){
+    public void checkCondition(LicenseEntity condition) {
         String errMessage = null;
-        if(StringUtils.isEmpty(condition.getUser())){
+        if (StringUtils.isEmpty(condition.getUser())) {
             errMessage = "user can not be null";
-        }else if(StringUtils.isEmpty(condition.getSid())){
+        } else if (StringUtils.isEmpty(condition.getSid())) {
             errMessage = "sid can not be null";
-        }else if(StringUtils.isEmpty(condition.getPassword())){
+        } else if (StringUtils.isEmpty(condition.getPassword())) {
             errMessage = "password can not be null";
-        }else if(condition.getNotAfter() == null){
+        } else if (condition.getNotAfter() == null) {
             errMessage = "notAfter can not be null";
         }
 
-        if(!StringUtils.isEmpty(errMessage)){
+        if (!StringUtils.isEmpty(errMessage)) {
             throw new IllegalArgumentException(errMessage);
         }
         SimpleDateFormat sfm = new SimpleDateFormat("yyyy-MM-dd");
-        if(StringUtils.isEmpty(condition.getCreateTime())){
+        if (StringUtils.isEmpty(condition.getCreateTime())) {
             condition.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         }
-        if(StringUtils.isEmpty(condition.getNotBefore())){
+        if (StringUtils.isEmpty(condition.getNotBefore())) {
             condition.setNotBefore(sfm.format(new Date()));
         }
 

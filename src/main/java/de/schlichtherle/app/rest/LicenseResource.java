@@ -25,13 +25,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-@RequestMapping("/license")
+@RequestMapping("/api/license")
 @Controller
 @RestController
 @CrossOrigin
-public class CreateLicenseResource {
+public class LicenseResource {
 
-    private static Logger logger = LoggerFactory.getLogger(CreateLicenseResource.class);
+    private static Logger logger = LoggerFactory.getLogger(LicenseResource.class);
 
     @Autowired
     private LicenseCommonUtil commonUtil;
@@ -46,12 +46,12 @@ public class CreateLicenseResource {
     public ResponseEntity createLicense(@Param LicenseEntity condition) {
         commonUtil.checkCondition(condition);
         LicenseCommonContent licenseCommonContent = commonUtil.buildLicenseCommonContent(condition);
-        LicenseCommonParam licenseCommonParam = commonUtil.buildLicenseCommonParam(condition.getPassword());
+        LicenseCommonParam licenseCommonParam = commonUtil.buildLicenseCommonParam(condition);
 
         Boolean succ = new CreateLicense().create(licenseCommonParam, licenseCommonContent);
         if (succ) {
             try {
-                File file = new File(commonUtil.licPath);
+                File file = new File(commonUtil.getlicPath(condition.getUser(),condition.getNotBefore()));
                 FileInputStream inputs = new FileInputStream(file);
                 byte[] arr = new byte[(int) file.length()];
                 inputs.read(arr);

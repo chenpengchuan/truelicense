@@ -1,6 +1,6 @@
 package de.schlichtherle.app;
 
-import de.schlichtherle.app.rest.CreateLicenseResource;
+import de.schlichtherle.app.rest.LicenseResource;
 import de.schlichtherle.app.rest.SidResource;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -22,7 +22,7 @@ public class App {
                 .properties()
                 .sources(App.class)
                 .sources(SidResource.class)
-                .sources(CreateLicenseResource.class)
+                .sources(LicenseResource.class)
 //                .web(WebApplicationType.REACTIVE)
                 .run(args);
     }

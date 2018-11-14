@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-@RequestMapping("/sid")
+@RequestMapping("/api/sid")
 @Controller
 @RestController
 public class SidResource {
