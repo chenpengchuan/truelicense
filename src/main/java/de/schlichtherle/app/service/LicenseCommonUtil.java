@@ -87,7 +87,7 @@ public class LicenseCommonUtil {
         licenseCommonContent.setNotBefore(condition.getNotBefore());
 
         LicenseCheckModel checkModel = new LicenseCheckModel();
-        checkModel.setSid(condition.getSid());
+        checkModel.setSid(condition.getSid().trim());
         licenseCommonContent.setLicenseCheckModel(checkModel);
 
         return licenseCommonContent;
