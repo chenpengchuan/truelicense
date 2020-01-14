@@ -7,13 +7,11 @@ import de.schlichtherle.license.LicenseParam;
  * @author wucy
  */
 public class LicenseManagerHolder {
-	
-	private static LicenseManager licenseManager;
- 
+
+//	private static  LicenseManager licenseManager;
+
 	public static synchronized LicenseManager getLicenseManager(LicenseParam licenseParams) {
-    	if (licenseManager == null) {
-    		licenseManager = new LicenseManager(licenseParams);
-    	}
+		LicenseManager licenseManager = new LicenseManager(licenseParams);
     	return licenseManager;
     }
 }

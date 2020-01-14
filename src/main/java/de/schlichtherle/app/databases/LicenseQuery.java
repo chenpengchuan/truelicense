@@ -17,14 +17,25 @@ public class LicenseQuery {
     @Autowired
     private LicenseRepository licenseRepository;
 
-    public Page<LicenseEntity> queryLicenseList(String user,int page,int limit,Sort sort){
+    public Page<LicenseEntity> queryLicenseListByUser(String user,int page,int limit,Sort sort){
         Pageable pageable = new PageRequest(page,limit,sort);
         if(StringUtils.isEmpty(user)){
             user = "%";
         }else{
            user = "%"+user+"%";
         }
-        Page<LicenseEntity> result=licenseRepository.findAllByUser(user+"%",pageable);
+        Page<LicenseEntity> result=licenseRepository.findAllByUser(user,pageable);
+        return result;
+    }
+
+    public Page<LicenseEntity> queryLicenseBySid(String sId,int page,int limit,Sort sort){
+        Pageable pageable = new PageRequest(page,limit,sort);
+        if(StringUtils.isEmpty(sId)){
+            sId = "%";
+        }else{
+            sId = "%"+sId+"%";
+        }
+        Page<LicenseEntity> result=licenseRepository.findPageBySid(sId,pageable);
         return result;
     }
 

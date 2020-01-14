@@ -23,7 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequestMapping("/api/license")
 @Controller
@@ -48,6 +49,9 @@ public class LicenseResource {
         LicenseCommonContent licenseCommonContent = commonUtil.buildLicenseCommonContent(condition);
         LicenseCommonParam licenseCommonParam = commonUtil.buildLicenseCommonParam(condition);
 
+        if (!licenseCommonParam.getStorePwd().equals(licenseCommonParam.getKeyPwd())){
+            throw new IllegalArgumentException("wrong password.");
+        }
         Boolean succ = new CreateLicense().create(licenseCommonParam, licenseCommonContent);
         if (succ) {
             try {
@@ -81,10 +85,20 @@ public class LicenseResource {
         }
     }
 
+    /**
+     *g根据用户名或sid查询.由于前端已经没有维护，所以根据sid查询也只能暂放在此接口;先按用户查询，如果没查询到再按sid查询。
+     * @param input 用户名或sid
+     * @param page
+     * @param limit
+     * @return
+     */
     @GetMapping("/query")
-    public ResponseEntity<Page<LicenseEntity>> query(@RequestParam(value="user") String username,@RequestParam(value="page") int page,@RequestParam(value="limit") int limit) {
+    public ResponseEntity<Page<LicenseEntity>> query(@RequestParam(value="user") String input,@RequestParam(value="page") int page,@RequestParam(value="limit") int limit) {
         Sort sort = new Sort(Sort.Direction.ASC,"notAfter");
-        Page<LicenseEntity> rt = licenseQuery.queryLicenseList(username,page,limit,sort);
+        Page<LicenseEntity> rt = licenseQuery.queryLicenseListByUser(input,page,limit,sort);
+        if (rt.getTotalElements() == 0 && !StringUtils.isEmpty(input)){
+            rt = licenseQuery.queryLicenseBySid(input,page,limit,sort);
+        }
         return new ResponseEntity<>(rt, HttpStatus.OK);
     }
 
