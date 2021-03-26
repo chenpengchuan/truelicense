@@ -1,32 +1,71 @@
 package de.schlichtherle.util;
 
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.Configuration;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.models.V1Namespace;
+import io.kubernetes.client.util.ClientBuilder;
+import io.kubernetes.client.util.Config;
 import sun.misc.BASE64Encoder;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 使用md5对获取到的机器信息进行加密，生成对应的sid
  */
 public class SidUtils {
-    private static String computerInfo = "";
-
 
     public static String getSid() {
-        String cpu = HardWareUtils.getCPUSerial();
-        String mac = HardWareUtils.getMac();
-//        String Motherboard = HardWareUtils.getMotherboardSN();
-        computerInfo = cpu + "," + mac;
+        File caFile = new File(Config.SERVICEACCOUNT_CA_PATH);
+        String sid;
+        if (caFile.exists()) {
+            //TODO Kubernetes env.
+            sid = getSidFromKubernetes();
+        } else {
+            //TODO not Kubernetes env.
+            sid = getSidFromSystem();
+        }
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            byte[] digest = messageDigest.digest(computerInfo.getBytes());
+            byte[] digest = MessageDigest.getInstance("MD5").digest(sid.getBytes());
             // 通过base64编码成明文字符
             BASE64Encoder encoder = new BASE64Encoder();
-//            System.out.println(encoder.encode(digest));
             return encoder.encode(digest);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("get this computer info failed");
-            return null;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * get hardware info from current System
+     * Windows cpu,mac
+     * Linux ,mac
+     */
+    private static String getSidFromSystem() {
+        String cpu = HardWareUtils.getCPUSerial();
+        String mac = HardWareUtils.getMac();
+        String computerInfo = cpu + "," + mac;
+        return computerInfo;
+    }
+
+    /**
+     * get uuid from kubernetes cluster's namespace kube-system
+     */
+    private static String getSidFromKubernetes() {
+        try {
+            ApiClient client = ClientBuilder.cluster().build();
+            Configuration.setDefaultApiClient(client);
+            CoreV1Api api = new CoreV1Api();
+            V1Namespace sysNamespace = api.readNamespace("kube-system", null, null, null);
+            String kub_uid = sysNamespace.getMetadata().getUid();
+            return kub_uid;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ApiException e) {
+            throw new RuntimeException(e);
         }
     }
 }
